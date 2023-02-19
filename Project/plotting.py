@@ -1,9 +1,17 @@
 import itertools
+
+import matplotlib.colors
 import numpy as np
 import matplotlib.pyplot as plt
 
+from typing import List, NoReturn
 
-def plot_confusion_matrix(cm, classes, normalize=False, title='Confusion matrix', cmap=plt.cm.Blues):
+
+def plot_confusion_matrix(cm: np.ndarray,
+                          classes: List[str],
+                          normalize: bool = False,
+                          title: str = 'Confusion matrix',
+                          cmap: matplotlib.colors.LinearSegmentedColormap = plt.cm.Blues) -> NoReturn:
     """ Plots confusion matrix in a readable format.
     :param cm: confusion matrix
     :type cm: numpy array
@@ -18,7 +26,9 @@ def plot_confusion_matrix(cm, classes, normalize=False, title='Confusion matrix'
 
     """
     if normalize:
+        # Normalize the confusion matrix by row to have correct fractions
         cm = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
+        # Handle cases where all values in a row are zero to avoid NaN
         cm[np.isnan(cm)] = 0
         print("Normalized confusion matrix")
     else:
@@ -32,7 +42,9 @@ def plot_confusion_matrix(cm, classes, normalize=False, title='Confusion matrix'
     plt.xticks(tick_marks, classes, rotation=45)
     plt.yticks(tick_marks, classes)
 
+    # Format to display the values in the cells of the plot
     fmt = '.2f' if normalize else 'd'
+    # Determine threshold for color of text in cell based on value
     thresh = cm.max() / 2.
     for i, j in itertools.product(range(cm.shape[0]), range(cm.shape[1])):
         plt.text(j, i, format(cm[i, j], fmt), horizontalalignment="center", color="white" if cm[i, j] > thresh else "black")
